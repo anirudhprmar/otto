@@ -5,6 +5,11 @@ export const bashInputSchema = z.object({
   command: z.string().describe("The shell command to execute"),
 });
 
+export const readFileInputSchema = z.object({
+  path: z.string().describe("The path to the file to read"),
+})
+
+export type ReadFileInput = z.infer<typeof readFileInputSchema>;
 export type BashInput = z.infer<typeof bashInputSchema>;
 
 
@@ -23,9 +28,80 @@ export const bashTool: FunctionDeclaration = {
   },
 };
 
+export const readFileTool: FunctionDeclaration = {
+  name: "read_file",
+  description: "Reads the contents of a file and returns it as a string.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      path: {
+        type: Type.STRING,
+        description: "The path to the file to read"
+      }
+    },
+    required: ["path"]
+    }
+}
+
+// export const writeFileTool: FunctionDeclaration = {
+//   name: "write_file",
+//   description: "Writes a string to a file.",
+//   parameters: {
+//     type: Type.OBJECT,
+//     properties: {
+//       path:{
+//         type: Type.STRING,
+//         description: "The path to the file to write to"
+//       },
+//       content:{
+//         type: Type.STRING,
+//         description: "The content to write to the file"
+//       }
+//     },
+//     required: ["path", "content"]
+// }
+// }
+
+// export const glob: FunctionDeclaration = {
+//   name: "glob",
+//   description: "Finds files matching a pattern.",
+//   parameters: {
+//     type: Type.OBJECT,
+//     properties: {
+//       pattern:{
+//         type: Type.STRING,
+//         description: "The glob pattern to match"
+//       }
+//     },
+//     required: ["pattern"]
+// }
+// }
+
+// export const editFileTool: FunctionDeclaration = {
+//   name: "edit_file",
+//   description: "Edits the contents of a file.",
+//   parameters: {
+//     type: Type.OBJECT,
+//     properties: {
+//       path:{
+//         type: Type.STRING,
+//         description: "The glob pattern to match"
+//       },
+//       old_str:{
+//         type: Type.STRING,
+//         description: "The string to replace"
+//       },
+//       new_str:{
+//         type: Type.STRING,
+//         description: "The string to replace with"
+//       }
+//     },
+//     required: ["pattern"]
+// }
+// }
 
 export const allTools: Tool[] = [
   {
-    functionDeclarations:[bashTool]
+    functionDeclarations:[bashTool, readFileTool]
   }
 ];

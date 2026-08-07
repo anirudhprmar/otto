@@ -2,6 +2,7 @@ import type { Content } from "@google/genai";
 import { generateResponse } from "./client";
 import { allTools } from "./tools";
 import { bashExec } from "../tools/bash";
+import { readFile } from "../tools/read_file";
 
 export default async function runAgentLoop(initialPrompt?: string): Promise<void> {
     
@@ -10,7 +11,7 @@ export default async function runAgentLoop(initialPrompt?: string): Promise<void
             role: "user",
             parts: [
                 {
-                    text: initialPrompt || "List the files in the current directory" ,
+                    text: initialPrompt || "read the file at src/index.ts and tell me what it does in one word" ,
                 },
             ],
         },
@@ -41,6 +42,13 @@ while (maxTurns <= 2) {
             }
             const toolRes = await bashExec({ command: fc.args.command as string });
             res = toolRes as unknown as Record<string, unknown>;
+        } else if (name === "read_file") {
+          if (typeof fc?.args?.path !== "string") {
+              console.log("Invalid path argument");
+              continue;
+            }
+            const toolRes = await readFile({ path: fc.args.path as string });
+            res = { text: toolRes };
         } else {
             res = { error: "no tool response" };
         }
