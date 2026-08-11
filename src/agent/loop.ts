@@ -3,6 +3,7 @@ import { generateResponse } from "./client";
 import { allTools } from "./tools";
 import { bashExec } from "../tools/bash";
 import { readFile } from "../tools/read_file";
+import { EditFile } from "../tools/edit_file";
 
 export default async function runAgentLoop(initialPrompt?: string): Promise<void> {
     
@@ -11,7 +12,7 @@ export default async function runAgentLoop(initialPrompt?: string): Promise<void
             role: "user",
             parts: [
                 {
-                    text: initialPrompt || "read the file at src/index.ts and tell me what it does in one word" ,
+                    text: initialPrompt || "go to index.ts and implement taking input from argument which uses commander, keep it very minimal change very short" ,
                 },
             ],
         },
@@ -19,7 +20,8 @@ export default async function runAgentLoop(initialPrompt?: string): Promise<void
     
     let maxTurns = 0;
     
-while (maxTurns <= 2) {
+while (maxTurns <= 50) {
+  console.log(maxTurns++)
   const result = await generateResponse(contents, allTools);
   
   if (!result.candidates || result.candidates.length === 0) break;
@@ -29,11 +31,12 @@ while (maxTurns <= 2) {
   if (!candidateContent) break;
   
   contents.push(candidateContent);
-  
   if (result.functionCalls && result.functionCalls.length > 0) {
       const fc = result.functionCalls[0];
       const name = fc?.name;
       let res: Record<string, unknown>;
+
+      console.log(result.functionCalls?.length ? "→ tool call: " + name : "→ final text")
       
       if (name === "bash") {
           if (typeof fc?.args?.command !== "string") {
@@ -48,6 +51,13 @@ while (maxTurns <= 2) {
               continue;
             }
             const toolRes = await readFile({ path: fc.args.path as string });
+            res = { text: toolRes };
+        } else if (name === "edit_file") {
+          if (typeof fc?.args?.path !== "string" || typeof fc?.args?.old_str !== "string" || typeof fc?.args?.new_str !== "string") {
+              console.log("Invalid edit arguments");
+              continue;
+            }
+            const toolRes = await EditFile({ path: fc.args.path as string, old_str: fc.args.old_str as string, new_str: fc.args.new_str as string });
             res = { text: toolRes };
         } else {
             res = { error: "no tool response" };

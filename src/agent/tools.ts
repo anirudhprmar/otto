@@ -9,8 +9,15 @@ export const readFileInputSchema = z.object({
   path: z.string().describe("The path to the file to read"),
 })
 
+export const editFileInpushSchema = z.object({
+  path: z.string().describe("The path to the file to edit"),
+  old_str: z.string().describe("The string to replace"),
+  new_str: z.string().describe("The string to replace with"),
+})
+
 export type ReadFileInput = z.infer<typeof readFileInputSchema>;
 export type BashInput = z.infer<typeof bashInputSchema>;
+export type EditFileInpush = z.infer<typeof editFileInpushSchema>;
 
 
 export const bashTool: FunctionDeclaration = {
@@ -77,28 +84,28 @@ export const readFileTool: FunctionDeclaration = {
 // }
 // }
 
-// export const editFileTool: FunctionDeclaration = {
-//   name: "edit_file",
-//   description: "Edits the contents of a file.",
-//   parameters: {
-//     type: Type.OBJECT,
-//     properties: {
-//       path:{
-//         type: Type.STRING,
-//         description: "The glob pattern to match"
-//       },
-//       old_str:{
-//         type: Type.STRING,
-//         description: "The string to replace"
-//       },
-//       new_str:{
-//         type: Type.STRING,
-//         description: "The string to replace with"
-//       }
-//     },
-//     required: ["pattern"]
-// }
-// }
+export const editFileTool: FunctionDeclaration = {
+  name: "edit_file",
+  description: "Edits the contents of a file.",
+  parameters: {
+    type: Type.OBJECT,
+    properties: {
+      path:{
+        type: Type.STRING,
+        description: "The glob pattern to match"
+      },
+      old_str:{
+        type: Type.STRING,
+        description: "The string to replace"
+      },
+      new_str:{
+        type: Type.STRING,
+        description: "The string to replace with"
+      }
+    },
+    required: ["pattern"]
+}
+}
 
 export const allTools: Tool[] = [
   {
