@@ -4,6 +4,7 @@ import { allTools } from "./tools";
 import { bashExec } from "../tools/bash";
 import { readFile } from "../tools/read_file";
 import { EditFile } from "../tools/edit_file";
+import { glob } from "../tools/glob";
 
 export default async function runAgentLoop(initialPrompt?: string): Promise<void> {
     
@@ -59,7 +60,16 @@ while (maxTurns <= 50) {
             }
             const toolRes = await EditFile({ path: fc.args.path as string, old_str: fc.args.old_str as string, new_str: fc.args.new_str as string });
             res = { text: toolRes };
-        } else {
+        } else if (name === "glob") {
+          if (typeof fc?.args?.pattern !== "string" || typeof fc?.args?.path !== "string") {
+              console.log("Invalid glob arguments");
+              continue;
+            }
+            const toolRes = await glob({ pattern: fc.args.pattern as string, path: fc.args.path as string });
+            res = { text: toolRes };
+        } 
+        
+        else {
             res = { error: "no tool response" };
         }
         
