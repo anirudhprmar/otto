@@ -1,32 +1,22 @@
-import type {ReadFileInput} from "../agent/tools";
+import { resolve } from "node:path";
+import type { Tool } from "../types.ts";
 
-interface ReadFileProps {
-    path: string | ReadFileInput;
-}
-
-interface ReadFileResult {
-    content: string;
-}
-
-const MAX_OUTPUT_LENGTH = 200;
-
-
-export function truncateOutput(text: string, maxLength: number = MAX_OUTPUT_LENGTH): string {
-  if (text.length > maxLength) {
-    return text.slice(0, maxLength) + "\n... [Output truncated]";
-  }
-  return text;
-}
-
-export async function readFile({ path }: ReadFileProps): Promise<ReadFileResult> {
-    try{
+export const readFileTool: Tool = {
+    name: "read",
+    description:"read a file and return its contents",
+    parameters: {
+        type:"object",
+        properties: {
+            path: {
+                type: "string",
+                description: "path to the file, relative to the current folder"
+            }
+        },
+        required:["path"]
+    },
+    async execute(args) {
         const fs = await import("fs/promises");
-        const contents = await fs.readFile(path as string, "utf-8")
-
-        return { content: truncateOutput(contents) };
-
-    }catch (error){
-        console.error(`Error reading file at ${path}:`, error);
-        return { content: `Error reading file at ${path}: ${error}` };
+        const contents = fs.readFile(resolve(process.cwd(), String(args.path)), "utf8");
+        return contents
     }
 }
