@@ -26,7 +26,7 @@ export type AgentOptions = {
 
 export async function runAgentLoop(opts:AgentOptions): Promise<void> {
     const { provider, model, system, tools, messages, onEvent } = opts;
-    const maxTurns = opts.maxTurns ?? 10;
+    const maxTurns = opts.maxTurns ?? 50;
     const push = (message: Message) => {
         messages.push(message);
         onEvent({type:"message", message})
