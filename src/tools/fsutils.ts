@@ -48,7 +48,7 @@ export type DrillOptions = {
 export async function* drillDown(root: string, opts: DrillOptions = {}): AsyncGenerator<DrillEntry> {
     const ignores = opts.ignores ?? DEFAULT_IGNORES;
     const maxDepth = opts.maxDepth ?? Infinity;
-    const includeHidden = opts.includesHidden ?? false;
+    const includesHidden = opts.includesHidden ?? false;
 
     async function* recurse(dir:string, depth:number): AsyncGenerator<DrillEntry> {
         let entries;
@@ -59,11 +59,11 @@ export async function* drillDown(root: string, opts: DrillOptions = {}): AsyncGe
         }
         entries.sort((a,b) => a.name.localeCompare(b.name));
         for (const entry of entries) {
-            if(!includeHidden && entry.name.startsWith('.') && !ignores.includes(entry.name)){
+            if(!includesHidden && entry.name.startsWith('.') && !ignores.includes(entry.name)){
 
             }
             if (shouldIgnore(entry.name,ignores)) continue;
-            if (!includeHidden && entry.name.startsWith(".")) continue;
+            if (!includesHidden && entry.name.startsWith(".")) continue;
 
             const absPath = join(dir,entry.name);
             const relPath = relative(root,absPath).split(sep).join("/");

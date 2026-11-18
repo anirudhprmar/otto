@@ -1,7 +1,7 @@
 import { resolve } from "node:path";
 import { readFile } from "node:fs/promises";
 import type { Tool } from "../types";
-import { drillDown } from "./fsutil.ts";
+import { drillDown } from "./fsutils.ts";
 
 
 const MAX_MATCHES = 500;

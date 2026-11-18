@@ -10,14 +10,14 @@ export const lsTool: Tool = {
         properties: {
             path: { type : "string", description: "Directory to list, relative to the current folder (default '.')"},
             maxDepth: { type: "number", description: "How many levels deep to recurse (default: unlimited)"},
-            includeHidden: {type: "boolean", description: "Include dotfiles/dot-directories (default false)"},
+            includesHidden: {type: "boolean", description: "Include dotfiles/dot-directories (default false)"},
             dirsOnly: { type: "boolean", description: "Only list directories (default false)"}
         }
     },
     async execute(args) {
         const root = resolve(process.cwd(), String(args.path ?? "."));
         const maxDepth = typeof args.maxDepth === "number" ? args.maxDepth : Infinity;
-        const includesHidden = Boolean(args.includeHidden);
+        const includesHidden = Boolean(args.includesHidden);
         const dirsOnly = Boolean(args.dirsOnly);
 
         const lines: string[] = [];
